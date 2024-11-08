@@ -1,12 +1,12 @@
-[submodule "WhiskersWebApp"]
-	path = WhiskersWebApp
+[submodule "WebAppRedWhiskers"]
+	path = WebAppRedWhiskers
 	url = git@github.com:AquarioDeterminado/WhiskersWebApp.git
-[submodule "Whiskers_API"]
-	path = Whiskers_API
+[submodule "APIRedWhiskers"]
+	path = APIRedWhiskers
 	url = git@github.com:AquarioDeterminado/Redwhiskers_API.git
-[submodule "red-whiskers-AI"]
-	path = red-whiskers-AI
+[submodule "AIRedWhiskers"]
+	path = AIRedWhiskers
 	url = git@github.com:Ri787878/red-whiskers-AI.git
-[submodule "Redwhiskers_Sockets"]
-	path = Redwhiskers_Sockets
+[submodule "SocketsRedWhiskers"]
+	path = SocketsRedWhiskers
 	url = git@github.com:AndreZila01/Redwhiskers_Sockets.git
