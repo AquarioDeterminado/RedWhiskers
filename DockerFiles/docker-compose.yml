@@ -13,7 +13,7 @@ services:
 
   WebApp:
     image: node:latest
-    build: ./../WhiskersWebApp
+    build: ./../WebAppRedWhiskers
     restart: always
     ports:
       - "81:80"
@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./../WhiskersWebApp:/usr/src/app
+      - ./../WebAppRedWhiskers:/usr/src/app
     depends_on:
       - GameServer
       - AI
@@ -30,41 +30,41 @@ services:
 
   API:
     image: node:latest
-    build: ./../Whiskers_API
+    build: ./../APIRedWhiskers
     restart: always
     ports:
       - "3001:3000"
     env_file:
         - .env
     volumes:
-        - ./../Whiskers_API:/usr/src/app
+        - ./../APIRedWhiskers:/usr/src/app
     depends_on:
       - GameServer
       - DB
 
   GameServer:
     image: node:latest
-    build: ./../Redwhiskers_Sockets
+    build: ./../SocketsRedwhiskers
     restart: always
     ports:
       - "3002:3000"
     env_file:
         - .env
     volumes:
-        - ./../Redwhiskers_Sockets:/usr/src/app
+        - ./../SocketsRedwhiskers:/usr/src/app
     depends_on:
       - DB
 
   AI:
     image: python:latest
-    build: ./../red-whiskers-AI
+    build: ./../AIRedwhiskers
     restart: always
     ports:
       - "3003:3000"
     env_file:
       - .env
     volumes:
-      - ./../red-whiskers-AI:/usr/src/app
+      - ./../AIRedwhiskers:/usr/src/app
 
 
   DB:
