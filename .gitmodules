@@ -7,6 +7,6 @@
 [submodule "AIRedWhiskers"]
 	path = AIRedWhiskers
 	url = git@github.com:Ri787878/red-whiskers-AI.git
-[submodule "SocketsRedWhiskers"]
-	path = SocketsRedWhiskers
+[submodule "SocketsRedwhiskers"]
+	path = SocketsRedwhiskers
 	url = git@github.com:AndreZila01/Redwhiskers_Sockets.git
