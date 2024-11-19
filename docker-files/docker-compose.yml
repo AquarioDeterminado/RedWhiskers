@@ -1,70 +1,81 @@
 version: '3.1'
 services:
   RevProxy:
-    image: haproxy:latest
+    image: haproxytech/haproxy-alpine:latest
     restart: always
     ports:
       - "80:80"
       - "8080:8080"
+      - "85:85"
     volumes:
-      - haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-    depends_on:
-      - WebApp
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.2
 
-  WebApp:
-    image: node:latest
-    build: ./../WhiskersWebApp
-    restart: always
-    ports:
-      - "81:80"
-      - "8081:8080"
+  webapp:
+    build:
+      context: ../WhiskersWebApp
+      dockerfile: ../WhiskersWebApp/Dockerfile
     env_file:
       - .env
-    volumes:
-      - ./../WhiskersWebApp:/usr/src/app
-    depends_on:
-      - GameServer
-      - AI
-      - API
+    ports:
+      - "3010:3000"
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.3
+
+  webapp1:
+    build:
+      context: ./../WhiskersWebApp
+      dockerfile: ./../WhiskersWebApp/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3011:3000"
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.4
 
 
-  API:
-    image: node:latest
-    build: ./../Whiskers_API
+  api:
+    build:
+      context: ./../Whiskers_API
+      dockerfile: ./../Whiskers_API/Dockerfile
     restart: always
     ports:
-      - "3001:3000"
+      - "3020:3000"
     env_file:
         - .env
-    volumes:
-        - ./../Whiskers_API:/usr/src/app
-    depends_on:
-      - GameServer
-      - DB
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.5
 
   GameServer:
     image: node:latest
-    build: ./../Redwhiskers_Sockets
     restart: always
     ports:
-      - "3002:3000"
+      - "3030:3000"
     env_file:
         - .env
     volumes:
         - ./../Redwhiskers_Sockets:/usr/src/app
-    depends_on:
-      - DB
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.7
 
   AI:
     image: python:latest
-    build: ./../red-whiskers-AI
     restart: always
     ports:
-      - "3003:3000"
+      - "3040:3000"
     env_file:
       - .env
     volumes:
       - ./../red-whiskers-AI:/usr/src/app
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.9
 
 
   DB:
@@ -80,6 +91,16 @@ services:
       MONGO_INITDB_DATABASE: whiskers
     volumes:
       - dbdata6:/data/db
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.11
 
 volumes:
   dbdata6:
+
+networks:
+  whiskers-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.28.0.0/24"
