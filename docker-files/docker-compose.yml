@@ -5,8 +5,12 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "8080:8080"
-      - "85:85"
+      - "81:81"
+      - "3001:3001"
+      - "3010:3010"
+      - "3100:3100"
+      - "27010:27010"
+
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     networks:
@@ -20,7 +24,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3010:3000"
+      - "3020:3000"
     networks:
       whiskers-net:
         ipv4_address: 172.28.0.3
@@ -44,7 +48,7 @@ services:
       dockerfile: ./../Whiskers_API/Dockerfile
     restart: always
     ports:
-      - "3020:3000"
+      - "3030:3000"
     env_file:
         - .env
     networks:
@@ -55,7 +59,7 @@ services:
     image: node:latest
     restart: always
     ports:
-      - "3030:3000"
+      - "3040:3000"
     env_file:
         - .env
     volumes:
@@ -68,7 +72,7 @@ services:
     image: python:latest
     restart: always
     ports:
-      - "3040:3000"
+      - "3051:3000"
     env_file:
       - .env
     volumes:
@@ -77,26 +81,73 @@ services:
       whiskers-net:
         ipv4_address: 172.28.0.9
 
-
-  DB:
-    image: mongo:latest
-    restart: always
+  mongo1:
+    container_name: mongo1
+    image: mongo:7.0
+    command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27017" ]
     ports:
-      - "21017:27017"
-    env_file:
-      - .env
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USR}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PWD}
-      MONGO_INITDB_DATABASE: whiskers
+      - 27017:27017
+    healthcheck:
+      test: mongosh -- eval "try {rs.status()} catch(err) {rs.initiate({_id:'rs0',members:[{_id:0,host:'172.28.0.11:27017',priority:2},{_id:1,host:'172.28.0.12:27018',priority:1},{_id:2,host:'172.28.0.13:27019',priority:1},{_id:3,host:'172.28.0.14:27020',priority:1}]})" | mongosh --port 27017 --quiet
+      interval: 5m
+      timeout: 10s
+      retries: 3
     volumes:
-      - dbdata6:/data/db
+      - "mongo1_data:/data/db"
+      - "mongo1_config:/data/configdb"
     networks:
       whiskers-net:
         ipv4_address: 172.28.0.11
+  mongo2:
+    container_name: mongo2
+    image: mongo:7.0
+    command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27018" ]
+    ports:
+      - 27018:27018
+    volumes:
+      - "mongo2_data:/data/db"
+      - "mongo2_config:/data/configdb"
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.12
+
+  mongo3:
+    container_name: mongo3
+    image: mongo:7.0
+    command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27019" ]
+    ports:
+      - 27019:27019
+    volumes:
+      - "mongo3_data:/data/db"
+      - "mongo3_config:/data/configdb"
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.13
+
+  mongo4:
+    container_name: mongo4
+    image: mongo:7.0
+    command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27020" ]
+    ports:
+      - 27020:27020
+    volumes:
+      - "mongo4_data:/data/db"
+      - "mongo4_config:/data/configdb"
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.14
 
 volumes:
   dbdata6:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
+  mongo4_data:
+  mongo1_config:
+  mongo2_config:
+  mongo3_config:
+  mongo4_config:
+
 
 networks:
   whiskers-net:
