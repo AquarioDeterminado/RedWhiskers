@@ -55,6 +55,19 @@ services:
       whiskers-net:
         ipv4_address: 172.28.0.5
 
+  api1:
+    build:
+      context: ./../APIRedWhiskers
+      dockerfile: ./../APIRedWhiskers/Dockerfile
+    restart: always
+    ports:
+      - "3031:3000"
+    env_file:
+      - .env
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.6
+
   GameServer:
     image: node:latest
     restart: always
@@ -68,6 +81,19 @@ services:
       whiskers-net:
         ipv4_address: 172.28.0.7
 
+  GameServer1:
+    image: node:latest
+    restart: always
+    ports:
+      - "3041:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./../SocketsRedwhiskers:/usr/src/app
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.8
+
   AI:
     image: python:latest
     restart: always
@@ -80,6 +106,19 @@ services:
     networks:
       whiskers-net:
         ipv4_address: 172.28.0.9
+
+  AI1:
+    image: python:latest
+    restart: always
+    ports:
+      - "3052:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./../AIRedWhiskers:/usr/src/app
+    networks:
+      whiskers-net:
+        ipv4_address: 172.28.0.10
 
   mongo1:
     container_name: mongo1
