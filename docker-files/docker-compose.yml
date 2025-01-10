@@ -123,14 +123,14 @@ services:
   mongo1:
     container_name: mongo1
     image: mongo:7.0
-    command: [ "--replSet", "rs0", "--bind_ip_all", "--port", "27017" ]
+    command: --replSet rs0 --bind_ip_all --port 27017
     ports:
       - 27017:27017
     healthcheck:
-      test: mongosh -- eval "try {rs.status()} catch(err) {rs.initiate({_id:'rs0',members:[{_id:0,host:'172.28.0.11:27017',priority:2},{_id:1,host:'172.28.0.12:27018',priority:1},{_id:2,host:'172.28.0.13:27019',priority:1},{_id:3,host:'172.28.0.14:27020',priority:1}]})}" | mongosh --port 27017 --quiet
-      interval: 5m
+      test: mongosh --eval "try {rs.status()} catch(err) {rs.initiate({_id:'rs0',members:[{_id:0,host:'172.28.0.11:27017',priority:2},{_id:1,host:'172.28.0.12:27018',priority:1},{_id:2,host:'172.28.0.13:27019',priority:1},{_id:3,host:'172.28.0.14:27020',priority:1}]})}" | mongosh --port 27017 --quiet
+      interval: 1s
       timeout: 10s
-      retries: 3
+      retries: 5
     environment:
       MONGO_INITDB_DATABASE: whiskers
     volumes:
